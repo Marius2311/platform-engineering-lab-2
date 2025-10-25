@@ -7,6 +7,7 @@ data "openstack_compute_flavor_v2" "worker" {
 }
 
 data "openstack_images_image_v2" "image" {
+  count       = var.image_id == "" ? 1 : 0
   name_regex  = "^${var.image_name}$"
   most_recent = true
 }
@@ -17,7 +18,7 @@ resource "openstack_blockstorage_volume_v3" "node" {
   name        = each.value.name
   description = "Boot volume for node ${each.value.name}"
   metadata    = local.common_metadata
-  image_id    = data.openstack_images_image_v2.image.id
+  image_id    = var.image_id != "" ? var.image_id : data.openstack_images_image_v2.image[0].id
   size        = each.value.volume_size
 }
 
