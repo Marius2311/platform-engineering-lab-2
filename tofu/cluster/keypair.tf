@@ -8,7 +8,7 @@ resource "openstack_compute_keypair_v2" "keypair" {
 }
 
 resource "local_sensitive_file" "ssh_private_key" {
-  filename        = "${path.root}/secrets/${local.cluster_name}/ssh-private-key"
+  filename        = "${local.secrets_dir}/ssh-private-key"
   content         = tls_private_key.ssh_key.private_key_openssh
   file_permission = "0600"
 }

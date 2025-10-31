@@ -35,6 +35,9 @@ locals {
       }
     }
   )
+
+  secrets_dir = "${path.root}/secrets/${var.output_prefix != "" ? var.output_prefix : ""}${local.cluster_name}"
+  kubeconfig_path = "${local.secrets_dir}/kubeconfig.yaml"
 }
 
 resource "terraform_data" "fetch_kubeconfig" {
@@ -68,10 +71,6 @@ resource "terraform_data" "fetch_kubeconfig" {
 resource "random_password" "k3s_token" {
   length  = 64
   special = false
-}
-
-locals {
-  kubeconfig_path = "${path.root}/secrets/${local.cluster_name}/kubeconfig.yaml"
 }
 
 data "local_file" "kubeconfig" {

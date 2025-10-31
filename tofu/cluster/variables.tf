@@ -43,3 +43,9 @@ variable "worker_nodes" {
     flavor = "m1.extra_large"
   }
 }
+
+variable "output_prefix" {
+  description = "Prefix for output resources (e.g., kubeconfig file)."
+  type        = string
+  default     = ""
+}
