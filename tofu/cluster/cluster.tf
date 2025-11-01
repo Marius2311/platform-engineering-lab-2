@@ -1,11 +1,5 @@
-resource "random_pet" "cluster_name" {
-  count = var.name == "" ? 1 : 0
-
-  length = 2
-}
-
 locals {
-  cluster_name  = var.name != "" ? var.name : random_pet.cluster_name[0].id
+  cluster_name  = var.name
   resource_name = "cluster-${local.cluster_name}"
   common_metadata = {
     "module"                = "cluster"

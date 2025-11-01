@@ -18,6 +18,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "4.1.0"
     }
+    pwpush = {
+      source  = "grulicht/pwpush"
+      version = "0.1.1"
+    }
   }
 }
 

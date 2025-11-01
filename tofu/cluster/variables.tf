@@ -1,7 +1,6 @@
 variable "name" {
-  description = "Name of the cluster (optional). If not provided, a random name will be generated. Always prefixed with \"cluster-\"."
+  description = "Name of the cluster. Resource names are prefixed with \"cluster-\"."
   type        = string
-  default     = ""
 }
 
 variable "image_name" {

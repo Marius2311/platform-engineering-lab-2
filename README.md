@@ -27,10 +27,11 @@ To prepare for the practical exercises in this course, ensure you have the follo
 
 ## Cluster Setup
 
-Each student receives an individual Kubernetes cluster for practical exercises during the course.
-The clusters are not set up for production use but provide a hands-on environment to gain practical experience with Kubernetes and the cloud native toolkit.
+Each student receives an individual Kubernetes cluster for practical exercises.
+The credentials will be shared via one-time links at the beginning of the course.
 
-The clusters are provisioned using the [OpenTofu](https://opentofu.org/) configuration in this repository (see the [cluster module](tofu/cluster/)) as follows:
+The clusters are not set up for production use but provide a hands-on environment to gain practical experience with Kubernetes and the cloud native toolkit.
+They are provisioned using the [OpenTofu](https://opentofu.org/) configuration in this repository (see the [cluster module](tofu/cluster/)) as follows:
 
 - **Kubernetes Distribution:** [k3s](https://k3s.io/) (lightweight Kubernetes, simple to set up)
 - **Cloud Platform:** Deployed on the [DHBW Cloud](https://dhbw.cloud/), a private OpenStack-based environment
