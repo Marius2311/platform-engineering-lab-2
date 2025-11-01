@@ -62,6 +62,7 @@ resource "openstack_compute_instance_v2" "node" {
   }
 
   user_data = templatefile("${path.module}/user_data.tftpl", {
+    "cluster_name"          = local.cluster_name
     "role"                  = each.value.role
     "control_plane_ip"      = local.control_plane_ip
     "control_plane_address" = local.control_plane_address

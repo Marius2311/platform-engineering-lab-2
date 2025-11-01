@@ -90,7 +90,7 @@ write_files:
     curl -sfL https://get.k3s.io | sh -s -
 
     %{ if role == "control-plane" }
-    sed 's/127.0.0.1/${control_plane_ip}/' /etc/rancher/k3s/k3s.yaml > /home/${ssh_user}/kubeconfig.yaml
+    sed -e 's/127.0.0.1/${control_plane_ip}/' -e 's/default/${cluster_name}/' /etc/rancher/k3s/k3s.yaml > /home/${ssh_user}/kubeconfig.yaml
     chown ${ssh_user}:${ssh_user} /home/${ssh_user}/kubeconfig.yaml
     chmod 600 /home/${ssh_user}/kubeconfig.yaml
     %{ endif }
