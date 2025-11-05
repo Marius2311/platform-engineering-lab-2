@@ -1,0 +1,8 @@
+image:
+  tag: 6.9.0
+
+service:
+  type: LoadBalancer
+  # prevent port collision with other labs
+  externalPort: 12001
+  grpcPort: null

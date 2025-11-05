@@ -12,6 +12,7 @@ Students are expected to complete the exercises using their individual Kubernete
 The [labs directory](labs) contains solutions and explanations for each exercise:
 
 - [Kustomize](labs/kustomize.md)
+- [Helm](labs/helm.md)
 
 ## Prerequisites
 

@@ -1,6 +1,6 @@
 # Lab: Kustomize
 
-This solution demonstrates how to use Kustomize to deploy the [podinfo](https://github.com/stefanprodan/podinfo) application with environment-specific overlays.
+[Task Description](https://talks.timebertt.dev/platform-engineering/#/lab-kustomize)
 
 ## Overview
 
@@ -60,7 +60,7 @@ For this, a JSON patch is used to modify the `spec.type` and `spec.ports[0].port
 The `port` is the port on which the `LoadBalancer` listens (i.e., accessible on the external IP).
 The `targetPort` is unchanged and continues to point to correct container port by referencing the named port in the container.
 
-## Rendering the Manifests
+## Render the Manifests
 
 You can render the manifests for each environment using Kustomize:
 
@@ -69,7 +69,7 @@ kubectl kustomize deploy/podinfo/overlays/development
 kubectl kustomize deploy/podinfo/overlays/production
 ```
 
-## Deploying the Manifests
+## Deploy the Manifests
 
 After verifying the rendered manifests, you can deploy them to your Kubernetes cluster:
 
@@ -78,7 +78,7 @@ kubectl apply -k deploy/podinfo/overlays/development
 kubectl apply -k deploy/podinfo/overlays/production
 ```
 
-## Verification
+## Verify the Deployments
 
 The results should look something like this:
 
@@ -112,14 +112,47 @@ NAME                                  DATA   AGE
 configmap/podinfo-config-6k4m67h8g9   1      4m29s
 ```
 
-Pick any of the external IP addresses and open it in your browser (port `12000`).
+Pick any of the external IP addresses and open it in your browser or request it using curl (port `12000`).
 You should see the podinfo application with the custom message "Hello, Platform Engineering!".
 It's served by one of the pods in the `podinfo-prod` namespace and shows the `6.9.0` version.
 
-To verify the development environment, you can port-forward the service to your local machine and open `http://localhost:9898` in your browser:
+```bash
+$ curl http://141.72.176.127:12000
+{
+  "hostname": "podinfo-ccc5dff5-zdvh9",
+  "version": "6.9.0",
+  "revision": "fb3b01be30a3f353b221365cd3b4f9484a0885ea",
+  "color": "#34577c",
+  "logo": "https://raw.githubusercontent.com/stefanprodan/podinfo/gh-pages/cuddle_clap.gif",
+  "message": "Hello, Platform Engineering!",
+  "goos": "linux",
+  "goarch": "amd64",
+  "runtime": "go1.24.3",
+  "num_goroutine": "8",
+  "num_cpu": "8"
+}
+```
+
+To verify the development environment, you can port-forward the service to your local machine and open `http://localhost:9898` in your browser or request it using curl:
 
 ```bash
-kubectl -n podinfo-dev port-forward svc/podinfo 9898:9898
+$ kubectl -n podinfo-dev port-forward svc/podinfo 9898:9898
+
+# in a new terminal
+$ curl http://localhost:9898
+{
+  "hostname": "podinfo-677d5f7896-xxwxs",
+  "version": "6.9.2",
+  "revision": "e86405a8674ecab990d0a389824c7ebbd82973b5",
+  "color": "#34577c",
+  "logo": "https://raw.githubusercontent.com/stefanprodan/podinfo/gh-pages/cuddle_clap.gif",
+  "message": "Hello, Platform Engineering!",
+  "goos": "linux",
+  "goarch": "amd64",
+  "runtime": "go1.25.1",
+  "num_goroutine": "8",
+  "num_cpu": "8"
+}
 ```
 
 It also shows the custom message "Hello, Platform Engineering!" and shows a more recent version.
