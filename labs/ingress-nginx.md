@@ -50,6 +50,33 @@ The `host` field are set in the respective overlays by a patch in the `kustomiza
 
 See [this commit](https://github.com/timebertt/platform-engineering-lab/commit/a979958124916ebedd9f1ea5637e53c6ea2b188d) for the complete changes.
 
+The resulting `Ingress` manifests should look similar to the following:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: podinfo
+  namespace: podinfo-dev
+spec:
+  # Explicitly specify the ingress class to use, in case
+  # the IngressClass nginx is not marked as default.
+  ingressClassName: nginx
+  rules:
+  - host: podinfo-dev.timebertt.dski23a.timebertt.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: podinfo
+            port:
+              name: http
+```
+
+Specifying the `ingressClassName` field is optional if we configured the `nginx` IngressClass as the default IngressClass in the cluster during the ingress-nginx installation.
+
 After committing the changes and pushing them to the GitHub repository, Flux deploys the added `Ingress` resources in both environments.
 Both `Ingress` objects should be ready and have an external address assigned.
 
