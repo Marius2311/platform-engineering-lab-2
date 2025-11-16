@@ -25,3 +25,12 @@ patches:
       path: /spec/tls/0/hosts
       value:
       - *host
+- path: patch-ingress-auth.yaml
+
+secretGenerator:
+- name: basic-auth
+  options:
+    # don't append hash of the file contents to the secret name
+    disableNameSuffixHash: true
+  files:
+  - auth=htpasswd.encrypted
