@@ -19,6 +19,7 @@ The [labs directory](labs) contains solutions and explanations for each exercise
 - [cert-manager](labs/cert-manager.md)
 - [SOPS](labs/sops.md)
 - [renovate](labs/renovate.md)
+- [kube-prometheus-stack](labs/kube-prometheus-stack.md)
 
 ## Prerequisites
 

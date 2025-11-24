@@ -1,0 +1,95 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: prometheus-community
+  namespace: flux-system
+spec:
+  interval: 1h0m0s
+  type: oci
+  url: oci://ghcr.io/prometheus-community/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      interval: 1h0m0s
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+      version: 79.7.1
+  install:
+    createNamespace: true
+  interval: 1h0m0s
+  releaseName: kube-prometheus-stack
+  targetNamespace: monitoring
+  values:
+    grafana:
+      # Switch from a Deployment to a StatefulSet for Grafana.
+      # This simplifies things when enabling persistent storage.
+      useStatefulSet: true
+
+      # Enable persistent storage for Grafana.
+      # This enables us to simply create and manage dashboards in the UI without the detour via ConfigMaps.
+      persistence:
+        enabled: true
+
+      ingress:
+        # Enable ingress for Grafana
+        enabled: true
+        # Explicitly select the ingress-nginx controller in case the IngressClass has not been set as default
+        ingressClassName: nginx
+
+        # Define the host for Grafana ingress
+        # <sub-domain>.<cluster-name>.dski23a.timebertt.dev
+        hosts:
+        - &host grafana.timebertt.dski23a.timebertt.dev
+        tls:
+        - secretName: grafana-tls
+          hosts:
+          - *host
+
+        # Enable cert-manager annotations for automatic TLS certificate management
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+
+    prometheus:
+      # Customize the Prometheus object created by the helm chart.
+      prometheusSpec:
+        # Enable persistent storage for Prometheus.
+        # This is important to retain metrics data across pod restarts and upgrades.
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              resources:
+                requests:
+                  storage: 20Gi
+
+        # Retain metrics data until the persistent storage is full.
+        # When more metrics data is collected, older data will be deleted to make space for new data.
+        retentionSize: 20GiB
+
+      ingress:
+        # Enable ingress for Prometheus
+        enabled: true
+        # Explicitly select the ingress-nginx controller in case the IngressClass has not been set as default
+        ingressClassName: nginx
+
+        # Define the host for Prometheus ingress
+        # <sub-domain>.<cluster-name>.dski23a.timebertt.dev
+        hosts:
+        - &host prometheus.timebertt.dski23a.timebertt.dev
+        tls:
+        - secretName: prometheus-tls
+          hosts:
+          - *host
+
+        # Enable cert-manager annotations for automatic TLS certificate management
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
