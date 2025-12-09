@@ -8,12 +8,29 @@ resource "random_string" "cluster_id" {
   special = false
 }
 
+resource "random_string" "group_cluster_id" {
+  count = var.group_cluster_count
+
+  length  = 4
+  lower   = true
+  upper   = false
+  numeric = false
+  special = false
+}
+
 locals {
   student_clusters = {
     for i in range(var.cluster_count) :
     format("student-%02d", i + 1) => {
       name          = format("student-%s", random_string.cluster_id[i].id)
       output_prefix = format("%02d-", i + 1)
+    }
+  }
+  group_clusters = {
+    for i in range(var.group_cluster_count) :
+    format("group-%02d", i + 1) => {
+      name          = format("group-%s", random_string.group_cluster_id[i].id)
+      output_prefix = format("%02d-", i + 51)
     }
   }
 
@@ -28,7 +45,8 @@ locals {
         output_prefix = "00-"
       }
     },
-    local.student_clusters
+    local.student_clusters,
+    local.group_clusters
   )
 }
 
@@ -45,7 +63,7 @@ module "cluster" {
 }
 
 resource "pwpush_push" "cluster_credentials" {
-  for_each = local.student_clusters
+  for_each = merge(local.student_clusters, local.group_clusters)
 
   name = "Kubeconfig and SSH private key for cluster ${each.value.name} (${each.key})"
 
@@ -71,15 +89,24 @@ resource "pwpush_push" "cluster_credentials" {
     chmod 600 ssh-private-key-${each.value.name}
   EOT
 
-  expire_after_views = 1
+  expire_after_views = startswith(each.value.name, "group-") ? 30 : 1
   expire_after_days  = 90
 }
 
 resource "local_sensitive_file" "cluster_credentials_links" {
-  filename = "${path.root}/secrets/cluster-credentials-links.html"
+  for_each = {
+    "cluster-credentials-links" : {
+      "clusters" : local.student_clusters
+    },
+    "cluster-credentials-links-group" : {
+      "clusters" : local.group_clusters
+    }
+  }
+
+  filename = "${path.root}/secrets/${each.key}.html"
 
   content = join("\n", concat(["<ul>"],
-    [for key, value in local.student_clusters :
+    [for key, value in each.value.clusters :
       "<li>${key}: <a href='${pwpush_push.cluster_credentials[key].html_url}' target='_blank'>cluster ${value.name} credentials</a></li>"
     ],
     ["</ul>"],

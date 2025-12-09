@@ -15,3 +15,9 @@ variable "cluster_count" {
   type        = number
   default     = 1
 }
+
+variable "group_cluster_count" {
+  description = "Number of group clusters to create."
+  type        = number
+  default     = 1
+}
