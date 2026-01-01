@@ -11,7 +11,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/timebertt/platform-engineering-lab
+  url: ssh://git@github.com/Marius2311/platform-engineering-lab-2
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
